@@ -13,7 +13,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     let list = [];
-    _.times(100000, () => {
+    _.times(1000000, () => {
       this.props.store.addTodo((0 | Math.random() * 9e6).toString(16));
     });
 
