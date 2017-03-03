@@ -6,17 +6,31 @@ import '../styles/global.scss';
 import '@blueprintjs/table/dist/table.css';
 import { Button, Menu, MenuItem, MenuDivider, Popover, Position, Dialog, Intent, EditableText, EditableCell, SelectionModes } from "@blueprintjs/core";
 import { Table, Column, Cell } from '@blueprintjs/table';
+import _ from 'lodash';
 
 @inject('store') @observer
 export default class App extends React.Component {
 
+  componentDidMount() {
+    let list = [];
+    _.times(100000, () => {
+      this.props.store.addTodo((0 | Math.random() * 9e6).toString(16));
+    });
+
+  }
+
   render() {
-    const { todoList } = this.props.store;
+    const { todoList, searchText } = this.props.store;
+    let list = todoList;
+    if (searchText) {
+      list = _.filter(todoList, (todo) => {
+        return todo.indexOf(searchText) >= 0;
+      });
+    }
     const renderCell = (rowIndex) =>
       <Cell>
-        {this.props.store.todoList[rowIndex]}
+        {list[rowIndex]}
       </Cell>;
-
     return (
       <div>
         <div style={{
@@ -25,10 +39,10 @@ export default class App extends React.Component {
           <h1>React Mobx Blueprint Boilerplate</h1>
           <MenuBar />
         </div>
-        <Table numRows={todoList.length} className='pt-dark'
+        <Table numRows={list.length} className='pt-dark'
           onSelection={(regions) => {
             if (regions[0].rows) {
-              this.props.store.setSelectedTodo(todoList[regions[0].rows[0]]);
+              this.props.store.setSelectedTodo(list[regions[0].rows[0]]);
             }
           }}>
           <Column name='List' renderCell={renderCell} />
@@ -42,11 +56,12 @@ export default class App extends React.Component {
 @inject('store') @observer
 class MenuBar extends React.Component {
   render() {
+    const { store } = this.props;
     return (
       <nav className="pt-navbar pt-dark .modifier">
         <div className="pt-navbar-group pt-align-left">
           <div className="pt-navbar-heading">Todo List</div>
-          <input className="pt-input" placeholder="Search files..." type="text" />
+          <input className="pt-input" placeholder="Search files..." type="text" onChange={(e) => store.setSearchText(e.target.value)} />
         </div>
         <div className="pt-navbar-group pt-align-right">
           <MenuActions />
@@ -89,7 +104,7 @@ class InputDialog extends React.Component {
         title="Dialog header"
       >
         <div className="pt-dialog-body">
-          <EditableText className="dialog_input" confirmOnEnterKey={true} value={this.state.value} onChange={(value) => this.setState({ value: value })} />
+          <EditableText className="dialog_input pt-input" confirmOnEnterKey={true} value={this.state.value} onChange={(value) => this.setState({ value: value })} />
         </div>
         <div className="pt-dialog-footer">
           <div className="pt-dialog-footer-actions">

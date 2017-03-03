@@ -4,6 +4,7 @@ export default class AppStore {
     @observable todoList = [];
     @observable selected = null;
     @observable inputOpen = false;
+    @observable searchText = '';
 
     @action addTodo(todo) {
         this.todoList.push(todo);
@@ -30,5 +31,9 @@ export default class AppStore {
 
     @action openDialog() {
         this.inputOpen = true;
+    }
+
+    @action setSearchText(text) {
+        this.searchText = text;
     }
 }
