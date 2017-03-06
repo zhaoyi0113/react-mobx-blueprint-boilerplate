@@ -7,13 +7,16 @@ import '@blueprintjs/table/dist/table.css';
 import { Button, Menu, MenuItem, MenuDivider, Popover, Position, Dialog, Intent, EditableText, EditableCell, SelectionModes } from "@blueprintjs/core";
 import { Table, Column, Cell } from '@blueprintjs/table';
 import _ from 'lodash';
+import DevTools, {setLogEnabled} from 'mobx-react-devtools';
+
+setLogEnabled(false);
 
 @inject('store') @observer
 export default class App extends React.Component {
 
   componentDidMount() {
     let list = [];
-    _.times(1000000, () => {
+    _.times(100000, () => {
       this.props.store.addTodo((0 | Math.random() * 9e6).toString(16));
     });
 
@@ -48,6 +51,7 @@ export default class App extends React.Component {
           <Column name='List' renderCell={renderCell} />
         </Table>
         <InputDialog ref={(r) => this.inputDialog = r} />
+        <DevTools />
       </div>
     );
   }
